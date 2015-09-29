@@ -368,11 +368,47 @@ static void cuckoo_hash_recover(cuckoo_hash_table_t* table, uint32_t *key)
 
 static void cuckoo_rehash(cuckoo_hash_table_t* table)
 {
-		
-}
+	cuckoo_hash_table_t old_table;
+	old_table.m_pSlots = table->m_pSlots;
+	old_table.m_slot_num = table->m_slot_num;
+	
+	table->m_slot_num *= 2;
+	table->m_pSlots = calloc(table->m_slot_num, sizeof(cuckoo_hash_slot_t));
+	if (NULL == table->m_pSlots)
+	{
+		printf("rehash slot fail\n");
+		return;
+	}	
+	
+	old_table.m_pBuckets = table->m_pBuckets;
+	old_table.m_bucket_num = table->m_bucket_num;
+	
+	table->m_bucket_num *= 2;
+	table->m_pBuckets = calloc(table->m_bucket_num, sizeof(cuckoo_hash_slot_t*));
+	if (NULL == table->m_pBuckets)
+	{
+		printf("rehash bucket fail\n");
+		free(table->m_pSlots);
+		table->m_pSlots = old_table.m_pSlots;
+		table->m_slot_num = old_table.m_slot_num;
+		return;
+	}	
 
+	int i;
+	for (i=0; i<table->m_bucket_num; ++i)
+	{
+		table->m_pBuckets[i] = &(table->m_pSlots[i * SLOT_NUM_PER_BUCKET]);
+	}	
+	
+	/*rehash all hash slots*/
+		
+	/*free old memory*/
+	free(old_table.m_pSlots);
+	free(old_table.m_pBuckets);	
+}
 
 int main(int argc, char** argv)
 {
+	printf("hello main\n");
 	return 0;
 }
