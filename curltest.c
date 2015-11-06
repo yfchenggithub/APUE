@@ -16,7 +16,7 @@
 #include <pthread.h>
 #include <curl/curl.h>
 
-const char* _url = "http://172.171.51.154:8888/txt/1.txt";
+const char* _url = "http://172.171.51.151:8080/txt/1.txt";
 const char* _filename = "2.txt";
 FILE* _file = NULL;
 #define MAXBUFSIZE 1024
@@ -45,9 +45,7 @@ int main(int argc, char** argv)
 	{
 		CURLcode res;
 		curl_easy_setopt(curl, CURLOPT_URL, _url);
-		_list = curl_slist_append(_list, "Accept:123");
-		_list = curl_slist_append(_list, "yfcheng: yes");
-		_list = curl_slist_append(_list, "key:value");
+		_list = curl_slist_append(_list, "Want-Content:white_list");
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, _list);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_mem);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, cache);
